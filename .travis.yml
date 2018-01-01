@@ -9,23 +9,19 @@ before_install:
   - source version.sh
   - echo $VERSION
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  - docker build -f latest/Dockerfile -t nodered/node-red-docker .
-  - docker build -f slim/Dockerfile -t nodered/node-red-docker:slim .
-  - docker build -f rpi/Dockerfile -t nodered/node-red-docker:rpi .
-  - docker tag nodered/node-red-docker nodered/node-red-docker:$VERSION
-  - docker tag nodered/node-red-docker:slim nodered/node-red-docker:$VERSION-slim
-  - docker tag nodered/node-red-docker:rpi nodered/node-red-docker:$VERSION-rpi
+  - docker build -f latest/Dockerfile -t dgoodman/myrepo .
+  - docker build -f slim/Dockerfile -t dgoodman/myrepo:slim .
+  - docker tag dgoodman/myrepo dgoodman/myrepo:$VERSION
+  - docker tag dgoodman/myrepo:slim dgoodman/myrepo:$VERSION-slim
 
 script:
-  - docker run -d nodered/node-red-docker:latest
+  - docker run -d dgoodman/myrepo:latest
   - docker ps | grep latest
-  - docker run -d nodered/node-red-docker:slim
+  - docker run -d dgoodman/myrepo:slim
   - docker ps | grep slim
-  - docker run -d nodered/node-red-docker:rpi
-  - docker ps | grep rpi
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_PULL_REQUEST" == "false" ]; then
     docker login -e "$DOCKER_EMAIL" -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-    docker push nodered/node-red-docker;
+    docker push dgoodman/myrepo;
     fi
